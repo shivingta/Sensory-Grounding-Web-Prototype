@@ -1,0 +1,5 @@
+{
+  "summary":  "Comprehensive developer architecture specification and technical stack overview for the Mannkaa 5-4-3-2-1 Sensory Grounding Tool prototype. Details the React 19 + TypeScript + Vite + Tailwind CSS v4 stack, procedural Web Audio API sound synthesis, promise-based speech sequencer, tap/hold deduplication, clinical somatic metrics, and local execution instructions.",
+  "updatedAt":  "2026-10-28T22:46:59.134168195Z",
+  "userFacing":  true
+}

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mannkaa 5-4-3-2-1 Sensory Grounding — Developer Architecture Specification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card-bg: #141c2b;
+      --border: #233147;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-teal: #2dd4bf;
+      --accent-emerald: #10b981;
+      --accent-sky: #38bdf8;
+      --code-bg: #070a10;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 10.5pt;
+        line-height: 1.5;
+        padding: 0 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .card {
+        border: 1px solid #cbd5e1 !important;
+        background: #f8fafc !important;
+        box-shadow: none !important;
+        color: #0f172a !important;
+      }
+      pre, code {
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        border: 1px solid #e2e8f0 !important;
+      }
+      table {
+        border-color: #cbd5e1 !important;
+      }
+      th {
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+      }
+      td {
+        border-bottom: 1px solid #e2e8f0 !important;
+        color: #334155 !important;
+      }
+      h1, h2, h3 {
+        color: #0f172a !important;
+      }
+      a {
+        color: #0284c7 !important;
+        text-decoration: underline;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 16px 24px;
+      border-radius: 16px;
+      margin-bottom: 32px;
+    }
+
+    .btn-print {
+      background: linear-gradient(135deg, #10b981, #2dd4bf);
+      color: #061826;
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn-print:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-back {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.15s ease;
+    }
+
+    .btn-back:hover {
+      color: var(--text-main);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: rgba(45, 212, 191, 0.15);
+      border: 1px solid rgba(45, 212, 191, 0.3);
+      color: var(--accent-teal);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+    }
+
+    .meta-item span {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .meta-item strong {
+      display: block;
+      font-size: 14px;
+      margin-top: 2px;
+      color: var(--text-main);
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 36px;
+      margin-bottom: 16px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h2::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 20px;
+      background: var(--accent-emerald);
+      border-radius: 2px;
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      color: var(--accent-sky);
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: #cbd5e1;
+      font-size: 14.5px;
+    }
+
+    ul, ol {
+      margin-left: 20px;
+      margin-bottom: 16px;
+      color: #cbd5e1;
+      font-size: 14.5px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      font-size: 13.5px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background: #172338;
+      color: var(--text-main);
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 12.5px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: #cbd5e1;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #38bdf8;
+    }
+
+    pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      margin: 16px 0;
+      line-height: 1.5;
+      color: #e2e8f0;
+    }
+
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="actions-bar no-print">
+      <a href="/" class="btn-back">← Back to Mannkaa App</a>
+      <button class="btn-print" onclick="window.print()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        Save / Print as PDF
+      </button>
+    </div>
+
+    <header>
+      <span class="badge">Architecture Specification</span>
+      <h1>Mannkaa 5-4-3-2-1 Somatic Grounding Tool</h1>
+      <p class="subtitle">Complete technical overview, code patterns, state machine, and local execution guide for engineering and design teams.</p>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span>Framework</span>
+          <strong>React 19 + TypeScript</strong>
+        </div>
+        <div class="meta-item">
+          <span>Build System</span>
+          <strong>Vite 8 + Tailwind v4</strong>
+        </div>
+        <div class="meta-item">
+          <span>Audio & Haptics</span>
+          <strong>Web Audio / Speech APIs</strong>
+        </div>
+        <div class="meta-item">
+          <span>Status</span>
+          <strong>Prototype Ready (Verified)</strong>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <h2>1. Flow & Clinical Somatic Architecture</h2>
+      <p>The application implements a 5-stage somatic reset model engineered to down-regulate sympathetic nervous system distress through bilateral sensory grounding:</p>
+      <ol>
+        <li><strong>Step 1 (Sight Awareness)</strong>: 5 visual anchors with luminous optical cues.</li>
+        <li><strong>Step 2 (Physical Touch)</strong>: 4 tactile anchors with body support cues.</li>
+        <li><strong>Step 3 (Ambient Sound)</strong>: 3 auditory ambient layer cues.</li>
+        <li><strong>Step 4 (Subtle Scent)</strong>: 2 olfactory respiratory prompts.</li>
+        <li><strong>Step 5 (Presence & Taste)</strong>: 1 concentrated somatic palate anchor.</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>2. Tech Stack & Dependencies</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Package / API</th>
+            <th>Version</th>
+            <th>Architectural Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Framework</strong></td>
+            <td><code>react</code>, <code>react-dom</code></td>
+            <td><code>^19.0.1</code></td>
+            <td>Modern concurrent root, reactive state machine</td>
+          </tr>
+          <tr>
+            <td><strong>Build Tool</strong></td>
+            <td><code>vite</code></td>
+            <td><code>^8.3.0</code></td>
+            <td>Zero-bundle dev server, ESM production bundling</td>
+          </tr>
+          <tr>
+            <td><strong>Language</strong></td>
+            <td><code>typescript</code></td>
+            <td><code>^7.0.2</code></td>
+            <td>Strict mode typing across all sensory metrics and events</td>
+          </tr>
+          <tr>
+            <td><strong>Styling</strong></td>
+            <td><code>tailwindcss</code></td>
+            <td><code>^4.3.3</code></td>
+            <td>Tailwind v4 engine via <code>@tailwindcss/vite</code></td>
+          </tr>
+          <tr>
+            <td><strong>Animation</strong></td>
+            <td><code>motion</code> (Framer Motion)</td>
+            <td><code>^12.23.24</code></td>
+            <td>Spring transitions (stiffness: 120, damping: 25)</td>
+          </tr>
+          <tr>
+            <td><strong>Icons</strong></td>
+            <td><code>lucide-react</code></td>
+            <td><code>^0.546.0</code></td>
+            <td>Lightweight SVG icons (Volume, Mic, Waves, Sparkle)</td>
+          </tr>
+          <tr>
+            <td><strong>Audio Engine</strong></td>
+            <td>Web Audio API</td>
+            <td>Browser Native</td>
+            <td>Procedural pink noise (waves), rain, and sine chimes</td>
+          </tr>
+          <tr>
+            <td><strong>Voice Guide</strong></td>
+            <td>Web Speech API</td>
+            <td>Browser Native</td>
+            <td>Non-blocking speech sequencing with 3 voice tones</td>
+          </tr>
+          <tr>
+            <td><strong>Tactile Feedback</strong></td>
+            <td>Navigator Vibration API</td>
+            <td>Browser Native</td>
+            <td>Haptic patterns for button taps and anchor completions</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>3. Repository Directory Structure</h2>
+      <pre>
+/
+├── index.html                  # Entry HTML (viewport, meta tags, Plus Jakarta Sans)
+├── package.json                # Dependencies and npm scripts
+├── tsconfig.json               # TypeScript strict configuration
+├── vite.config.ts              # Vite 8 config with Tailwind v4 & React plugins
+└── src/
+    ├── main.tsx                # React 19 createRoot mount
+    ├── App.tsx                 # 5-stage grounding flow controller, settings modal, state machine
+    ├── components/
+    │   └── SomaticCore.tsx     # Orbital anchor nodes, breathing orb, hold-vs-tap deduplication
+    └── logic/
+        ├── somaticNarrator.ts  # Promise-based speech sequencer & voice tone manager
+        ├── ambientAudio.ts     # Procedural Web Audio API sound generator (waves/rain)
+        └── groundingMachine.ts # Clinical state types, dwell time calculator, PostHog telemetry</pre>
+    </section>
+
+    <section>
+      <h2>4. Key Architectural Implementations</h2>
+
+      <h3>A. Promise-Based Speech Sequencer (<code>somaticNarrator.ts</code>)</h3>
+      <p>Standard browser <code>window.speechSynthesis</code> cancels active speech if a new utterance is queued carelessly. To eliminate audio cutoffs:</p>
+      <ul>
+        <li><strong>Chained Speech Execution (<code>speakSequence</code>)</strong>: The step description finishes completely $\rightarrow$ <code>utterance.onend</code> fires $\rightarrow$ awaits a 650ms somatic breath pause $\rightarrow$ speaks <code>Anchor 1</code>.</li>
+        <li><strong>Calibrated Voice Tones</strong>: Offers 3 profiles:
+          <ul>
+            <li><code>soft_meditative</code>: Rate 0.80, Pitch 0.92, Volume 0.85 (Warm, whispered pacing).</li>
+            <li><code>gentle_calm</code>: Rate 0.84, Pitch 0.96, Volume 0.90 (Unhurried cadence).</li>
+            <li><code>clear_grounded</code>: Rate 0.88, Pitch 1.00, Volume 0.95 (Steady presence).</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>B. Tap & 1.2s Hold Deduplication (<code>SomaticCore.tsx</code>)</h3>
+      <p>Users can complete anchors by either tapping or intentionally holding the center orb for 1.2 seconds without looking at the screen:</p>
+      <ul>
+        <li><code>onPointerDown</code>: Starts the hold timer and animates an SVG circular progress ring over 1200ms.</li>
+        <li>If held to 1200ms: Marks <code>holdTriggeredRef.current = true</code> and completes the anchor via <code>'hold'</code>.</li>
+        <li><code>onPointerUp</code>: Cleans up the timer and animation without triggering an extra tap.</li>
+        <li><code>onClick</code>: Consumes the event only if <code>holdTriggeredRef.current</code> was false, ensuring exactly one anchor registers per click.</li>
+      </ul>
+
+      <h3>C. Procedural Sound Synthesizers (<code>ambientAudio.ts</code>)</h3>
+      <p>No MP3 or WAV files are downloaded. The background ocean waves and rain are generated dynamically client-side using Web Audio API nodes (pink/white noise buffers modulated by low-frequency oscillators and resonant biquad filters).</p>
+    </section>
+
+    <section>
+      <h2>5. Quickstart Guide for Developers</h2>
+      <div class="card">
+        <p><strong>1. Clone and install dependencies:</strong></p>
+        <pre>git clone &lt;repo-url&gt;
+cd &lt;repo-folder&gt;
+npm install</pre>
+
+        <p><strong>2. Start local development server:</strong></p>
+        <pre>npm run dev</pre>
+        <p>The applet runs at <code>http://localhost:3000</code>.</p>
+
+        <p><strong>3. Lint and Build:</strong></p>
+        <pre>npm run lint    # Runs tsc --noEmit
+npm run build   # Produces production bundle in /dist</pre>
+      </div>
+    </section>
+
+    <footer>
+      Mannkaa Self Care Prototype · Built with React 19, TypeScript, Tailwind CSS v4, and Vite
+    </footer>
+  </div>
+</body>
+</html>
